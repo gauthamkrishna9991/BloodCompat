@@ -1,3 +1,7 @@
+/*
+ *   Copyright (c) 2020 
+ *   All rights reserved.
+ */
 using System;
 using System.Text;
 using Gtk;
@@ -17,27 +21,36 @@ namespace BloodCompat
         [UI] private ComboBox _recipient_blood_antigen = null;
 
         [UI] private ComboBox _recipient_blood_rh = null;
+
+        // Result Button
         [UI] private Button _result_button = null;
+
+        // Labels: Plasma & RBC Label
 
         [UI] private Label _plasma_label = null;
 
         [UI] private Label _rbc_label = null;
 
-        // Cell Renderers for Project.
+        // Cell Renderers for Project. (GTK-Specific. If you don't know it, don't change it.)
         CellRendererText[] comboBoxRenderers = {
             new CellRendererText(),
             new CellRendererText(),
             new CellRendererText(),
             new CellRendererText()
         };
+
+        // Antigen and RH Lists.
         private ListStore donorAntigens = new ListStore(typeof (string));
         private ListStore donorRHs = new ListStore(typeof (string));
         private ListStore recipientAntigens = new ListStore(typeof (string));
         private ListStore recipientRHs = new ListStore(typeof (string));
 
 
+        // Main Window for Project.
         public MainWindow() : this(new Builder("MainWindow.glade")) { }
 
+        // Build Main window and Autoconnect Handles (Every object with [UI] tag is autoconnected to
+        // objects with the corresponding ID in Glade File.
         private MainWindow(Builder builder) : base(builder.GetObject("MainWindow").Handle)
         {
             builder.Autoconnect(this);
@@ -47,7 +60,7 @@ namespace BloodCompat
             PopulateComboBoxes();
         }
 
-        // Clear all combobox values
+        // Clear all combobox values.
         public void ClearComboBoxes()
         {
             _donor_blood_antigen.Clear();
@@ -56,6 +69,7 @@ namespace BloodCompat
             _recipient_blood_rh.Clear();
         }
 
+        // Initialize Cell Renderers. This is neeeded for updating elements in the ComboBoxes.
         public void InitializeCellRenderers()
         {
             _donor_blood_antigen.PackStart(comboBoxRenderers[0], false);
@@ -88,11 +102,13 @@ namespace BloodCompat
 
         }
 
+        // When you delete the window (close it).
         private void Window_DeleteEvent(object sender, DeleteEventArgs a)
         {
             Application.Quit();
         }
 
+        // When you click the result button, to calculate result.
         private void Result_Button_Clicked(object sender, EventArgs a)
         {
             Blood donor = new Blood((BloodAntigen)_donor_blood_antigen.Active, (BloodRH)_donor_blood_rh.Active);
